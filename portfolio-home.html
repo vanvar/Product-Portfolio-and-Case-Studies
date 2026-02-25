@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Manager Portfolio - DoorDash Case Study</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fafafa;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 24px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+        
+        .case-study-header {
+            background: white;
+            border-radius: 16px;
+            padding: 48px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+        }
+        
+        .case-study-title {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: #667eea;
+            letter-spacing: -0.5px;
+        }
+        
+        .case-study-subtitle {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 32px;
+        }
+        
+        .problem-box {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe8a1 100%);
+            border-left: 4px solid #ffc107;
+            padding: 24px;
+            border-radius: 8px;
+            margin-bottom: 32px;
+        }
+        
+        .problem-box h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #856404;
+            margin-bottom: 12px;
+        }
+        
+        .problem-box p {
+            color: #856404;
+            line-height: 1.7;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid #f0f0f0;
+        }
+        
+        .metric-value {
+            font-size: 48px;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .metric-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .documents-section {
+            margin-top: 48px;
+        }
+        
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #1a1a1a;
+        }
+        
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .document-card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            text-decoration: none;
+            color: #1a1a1a;
+            transition: all 0.3s ease;
+            border: 2px solid #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .document-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .document-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .document-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+        
+        .document-icon {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+        
+        .document-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .document-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .prototype-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .prototype-card .document-title,
+        .prototype-card .document-description {
+            color: white;
+        }
+        
+        .prototype-card .document-description {
+            opacity: 0.95;
+        }
+        
+        .cta-section {
+            background: white;
+            border-radius: 16px;
+            padding: 48px;
+            text-align: center;
+            margin-top: 60px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+        }
+        
+        .cta-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .cta-text {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 24px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 24px;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .case-study-title {
+                font-size: 32px;
+            }
+            
+            .case-study-header {
+                padding: 32px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Product Manager Portfolio</h1>
+        <p>Building products that solve real user problems</p>
+    </div>
+    
+    <div class="container">
+        <div class="case-study-header">
+            <h2 class="case-study-title">DoorDash Nutrition Tracking Feature</h2>
+            <p class="case-study-subtitle">End-to-end product case study: From user research to launch strategy</p>
+            
+            <div class="problem-box">
+                <h3>🔍 The Problem</h3>
+                <p>Health-conscious users were abandoning DoorDash for competitors like Factor or home cooking because they had no visibility into nutritional content. DoorDash was losing a high-LTV user segment that represents 18% of GMV.</p>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">68%</div>
+                    <div class="metric-label">Wanted calorie/macro info before ordering</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">54%</div>
+                    <div class="metric-label">Would order more frequently with tracking</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">40</div>
+                    <div class="metric-label">In-depth user interviews conducted</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="documents-section">
+            <h2 class="section-title">📄 Case Study Documents</h2>
+            <p style="color: #666; margin-bottom: 32px; font-size: 16px;">Explore the complete product development process from vision to execution. Each document demonstrates core PM skills in strategy, research, prioritization, and cross-functional collaboration.</p>
+            
+            <div class="documents-grid">
+                <a href="https://github.com/vanvar/Product-Portfolio-and-Case-Studies/blob/main/README.md" target="_blank" class="document-card">
+                    <div class="document-icon">📋</div>
+                    <div class="document-title">Case Study Overview</div>
+                    <div class="document-description">Executive summary, key insights, user research findings, and business impact analysis</div>
+                </a>
+                
+                <a href="https://github.com/vanvar/Product-Portfolio-and-Case-Studies/blob/main/vision-strategy.md" target="_blank" class="document-card">
+                    <div class="document-icon">🎯</div>
+                    <div class="document-title">Vision & Strategy</div>
+                    <div class="document-description">Long-term product vision, market analysis, competitive positioning, and strategic pillars</div>
+                </a>
+                
+                <a href="https://github.com/vanvar/Product-Portfolio-and-Case-Studies/blob/main/prd.md" target="_blank" class="document-card">
+                    <div class="document-icon">📝</div>
+                    <div class="document-title">Product Requirements (PRD)</div>
+                    <div class="document-description">Detailed functional specs, technical requirements, user stories, and success metrics</div>
+                </a>
+                
+                <a href="https://github.com/vanvar/Product-Portfolio-and-Case-Studies/blob/main/business-case.md" target="_blank" class="document-card">
+                    <div class="document-icon">💰</div>
+                    <div class="document-title">Business Case & ROI</div>
+                    <div class="document-description">Financial modeling, revenue projections, cost analysis, and 3-year business impact</div>
+                </a>
+                
+                <a href="https://github.com/vanvar/Product-Portfolio-and-Case-Studies/blob/main/gtm-strategy.md" target="_blank" class="document-card">
+                    <div class="document-icon">🚀</div>
+                    <div class="document-title">Go-to-Market Strategy</div>
+                    <div class="document-description">Launch roadmap, marketing plan, channel strategy, and phased rollout approach</div>
+                </a>
+                
+                <a href="https://github.com/vanvar/Product-Portfolio-and-Case-Studies/blob/main/roadmap.md" target="_blank" class="document-card">
+                    <div class="document-icon">🗓️</div>
+                    <div class="document-title">Product Roadmap</div>
+                    <div class="document-description">18-month feature evolution, quarterly milestones, and long-term product vision</div>
+                </a>
+                
+                <a href="doordash-prototype.html" target="_blank" class="document-card prototype-card">
+                    <div class="document-icon">🎨</div>
+                    <div class="document-title">Interactive Prototype</div>
+                    <div class="document-description">Working demo of the nutrition tracking feature integrated into DoorDash's UI</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <h3 class="cta-title">Interested in working together?</h3>
+            <p class="cta-text">I'm passionate about building products that solve real user problems through data-driven decision making and cross-functional collaboration.</p>
+            <a href="https://github.com/vanvar/Product-Portfolio-and-Case-Studies" target="_blank" class="cta-button">View Full Repository on GitHub →</a>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2025 Product Manager Portfolio | Built to showcase PM skills in product strategy, user research, and execution</p>
+    </footer>
+</body>
+</html>
