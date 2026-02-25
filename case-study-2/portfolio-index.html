@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Manager Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fafafa;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 24px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            opacity: 0.95;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+        
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .section-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+        
+        .case-studies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 32px;
+            margin-bottom: 60px;
+        }
+        
+        .case-study-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .case-study-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+        
+        .case-header {
+            padding: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .case-header.closet {
+            background: linear-gradient(135deg, #F5E6D3 0%, #D68A73 100%);
+            color: #2E2E2E;
+        }
+        
+        .case-emoji {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .case-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .case-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .case-content {
+            padding: 32px;
+        }
+        
+        .problem-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+        
+        .problem-box h4 {
+            color: #856404;
+            margin-bottom: 8px;
+        }
+        
+        .problem-box p {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .metric {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #667eea;
+        }
+        
+        .metric-value.closet {
+            color: #D68A73;
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .cta-button.closet {
+            background: linear-gradient(135deg, #D68A73 0%, #B67963 100%);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Document Viewer */
+        .document-viewer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #fafafa;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .document-viewer.active {
+            display: block;
+        }
+        
+        .document-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+            background: white;
+            min-height: 100vh;
+        }
+        
+        .document-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 24px 0;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 40px;
+            z-index: 10;
+        }
+        
+        .close-document {
+            background: #f0f0f0;
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .close-document:hover {
+            background: #e0e0e0;
+        }
+        
+        .markdown-content {
+            text-align: left;
+            color: #1a1a1a;
+        }
+        
+        .markdown-content h1 {
+            font-size: 36px;
+            font-weight: 800;
+            margin: 32px 0 16px 0;
+            text-align: left;
+        }
+        
+        .markdown-content h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 28px 0 12px 0;
+            text-align: left;
+        }
+        
+        .markdown-content h3 {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 24px 0 10px 0;
+            text-align: left;
+        }
+        
+        .markdown-content p {
+            margin: 0 0 16px 0;
+            line-height: 1.7;
+            text-align: left;
+        }
+        
+        .markdown-content ul, .markdown-content ol {
+            margin: 0 0 16px 0;
+            padding-left: 24px;
+            text-align: left;
+        }
+        
+        .markdown-content li {
+            margin: 8px 0;
+            line-height: 1.6;
+            text-align: left;
+        }
+        
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            text-align: left;
+        }
+        
+        .markdown-content th, .markdown-content td {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+        }
+        
+        .markdown-content th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .markdown-content code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .markdown-content a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .markdown-content a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Case Study Navigator */
+        .case-navigator {
+            display: none;
+        }
+        
+        .case-navigator.active {
+            display: block;
+        }
+        
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 32px;
+        }
+        
+        .nav-card {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .nav-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .nav-card-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+        
+        .nav-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        
+        .nav-card-desc {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 24px;
+            color: #999;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 36px; }
+            .case-studies-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Home View -->
+    <div id="home-view">
+        <div class="hero">
+            <h1>Product Manager Portfolio</h1>
+            <p>Building products that solve real user problems</p>
+        </div>
+        
+        <div class="container">
+            <h2 class="section-title">Case Studies</h2>
+            <p class="section-subtitle">End-to-end product development from research to launch</p>
+            
+            <div class="case-studies-grid">
+                <!-- DoorDash Case Study -->
+                <div class="case-study-card" onclick="showCaseStudy('doordash')">
+                    <div class="case-header">
+                        <div class="case-emoji">🥗</div>
+                        <h3 class="case-title">DoorDash Nutrition Tracking</h3>
+                        <p class="case-subtitle">Helping health-conscious users make informed ordering decisions</p>
+                    </div>
+                    <div class="case-content">
+                        <div class="problem-box">
+                            <h4>🔍 The Problem</h4>
+                            <p>Health-conscious users were abandoning DoorDash for competitors because they had no visibility into nutritional content.</p>
+                        </div>
+                        <div class="metrics">
+                            <div class="metric">
+                                <div class="metric-value">68%</div>
+                                <div class="metric-label">Wanted macro info</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">54%</div>
+                                <div class="metric-label">Would order more</div>
+                            </div>
+                        </div>
+                        <a href="#" class="cta-button">Explore Case Study →</a>
+                    </div>
+                </div>
+                
+                <!-- AI Closet Case Study -->
+                <div class="case-study-card" onclick="showCaseStudy('closet')">
+                    <div class="case-header closet">
+                        <div class="case-emoji">👗</div>
+                        <h3 class="case-title">AI Closet Organizer</h3>
+                        <p class="case-subtitle">Solving "nothing to wear" through effortless AI cataloging</p>
+                    </div>
+                    <div class="case-content">
+                        <div class="problem-box">
+                            <h4>🔍 The Problem</h4>
+                            <p>People own 77 garments on average but wear only 20%, leading to decision fatigue and duplicate purchases.</p>
+                        </div>
+                        <div class="metrics">
+                            <div class="metric">
+                                <div class="metric-value closet">73%</div>
+                                <div class="metric-label">Quit existing apps</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value closet">10min</div>
+                                <div class="metric-label">Setup time (vs 2hrs)</div>
+                            </div>
+                        </div>
+                        <a href="#" class="cta-button closet">Explore Case Study →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2025 Product Manager Portfolio</p>
+        </footer>
+    </div>
+    
+    <!-- Case Study Navigator -->
+    <div id="case-navigator" class="case-navigator">
+        <div class="hero" id="case-hero">
+            <h1 id="case-nav-title">DoorDash Nutrition Tracking</h1>
+            <p id="case-nav-subtitle">Select a document to view</p>
+        </div>
+        
+        <div class="container">
+            <button class="close-document" onclick="showHome()">← Back to Portfolio</button>
+            
+            <div class="nav-grid" id="nav-grid">
+                <!-- Navigation cards will be inserted here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Document Viewer -->
+    <div id="document-viewer" class="document-viewer">
+        <div class="document-content">
+            <div class="document-header">
+                <button class="close-document" onclick="closeDocument()">← Back</button>
+            </div>
+            <div id="markdown-content" class="markdown-content"></div>
+        </div>
+    </div>
+    
+    <script>
+        const caseStudies = {
+            doordash: {
+                title: 'DoorDash Nutrition Tracking',
+                subtitle: 'Health-focused feature for food delivery',
+                folder: 'case-study-1',
+                docs: [
+                    { file: 'README.md', icon: '📋', title: 'Overview', desc: 'Executive summary and key insights' },
+                    { file: 'vision-strategy.md', icon: '🎯', title: 'Vision & Strategy', desc: 'Market analysis and strategic roadmap' },
+                    { file: 'prd.md', icon: '📝', title: 'PRD', desc: 'Product requirements and specs' },
+                    { file: 'business-case.md', icon: '💰', title: 'Business Case', desc: 'Financial modeling and ROI' },
+                    { file: 'gtm-strategy.md', icon: '🚀', title: 'GTM Strategy', desc: 'Launch plan and marketing' },
+                    { file: 'roadmap.md', icon: '🗓️', title: 'Roadmap', desc: '18-month product evolution' },
+                    { file: 'doordash-prototype.html', icon: '🎨', title: 'Prototype', desc: 'Interactive demo', isPrototype: true }
+                ]
+            },
+            closet: {
+                title: 'AI Closet Organizer',
+                subtitle: 'AI-powered wardrobe management app',
+                folder: 'case-study-2',
+                docs: [
+                    { file: 'README.md', icon: '📋', title: 'Overview', desc: 'Executive summary and research' },
+                    { file: 'vision-strategy.md', icon: '🎯', title: 'Vision & Strategy', desc: 'Product vision and market analysis' },
+                    { file: 'prd.md', icon: '📝', title: 'PRD', desc: 'Functional and technical requirements' },
+                    { file: 'business-case.md', icon: '💰', title: 'Business Case', desc: 'Financial projections and ROI' },
+                    { file: 'gtm-strategy.md', icon: '🚀', title: 'GTM Strategy', desc: 'Launch and growth strategy' },
+                    { file: 'roadmap.md', icon: '🗓️', title: 'Roadmap', desc: '18-month feature roadmap' },
+                    { file: 'closet-prototype.html', icon: '🎨', title: 'Prototype', desc: 'Working app demo', isPrototype: true }
+                ]
+            }
+        };
+        
+        let currentCase = null;
+        
+        function showHome() {
+            document.getElementById('home-view').style.display = 'block';
+            document.getElementById('case-navigator').classList.remove('active');
+            document.getElementById('document-viewer').classList.remove('active');
+            window.scrollTo(0, 0);
+        }
+        
+        function showCaseStudy(caseId) {
+            currentCase = caseId;
+            const caseData = caseStudies[caseId];
+            
+            document.getElementById('home-view').style.display = 'none';
+            document.getElementById('case-navigator').classList.add('active');
+            document.getElementById('case-nav-title').textContent = caseData.title;
+            document.getElementById('case-nav-subtitle').textContent = caseData.subtitle;
+            
+            const navGrid = document.getElementById('nav-grid');
+            navGrid.innerHTML = caseData.docs.map(doc => `
+                <div class="nav-card" onclick="${doc.isPrototype ? `window.open('${doc.file}', '_blank')` : `loadDocument('${caseData.folder}/${doc.file}')`}">
+                    <div class="nav-card-icon">${doc.icon}</div>
+                    <div class="nav-card-title">${doc.title}</div>
+                    <div class="nav-card-desc">${doc.desc}</div>
+                </div>
+            `).join('');
+            
+            window.scrollTo(0, 0);
+        }
+        
+        async function loadDocument(filepath) {
+            try {
+                const response = await fetch(filepath);
+                const markdown = await response.text();
+                const html = marked.parse(markdown);
+                
+                document.getElementById('markdown-content').innerHTML = html;
+                document.getElementById('case-navigator').classList.remove('active');
+                document.getElementById('document-viewer').classList.add('active');
+                window.scrollTo(0, 0);
+            } catch (error) {
+                console.error('Error loading document:', error);
+                alert('Could not load document. Please try again.');
+            }
+        }
+        
+        function closeDocument() {
+            document.getElementById('document-viewer').classList.remove('active');
+            document.getElementById('case-navigator').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
