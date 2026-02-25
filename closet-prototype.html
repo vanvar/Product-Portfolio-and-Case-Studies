@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Closet Organizer - Prototype</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #FAFAF8; color: #2E2E2E; }
+        
+        .phone-frame {
+            max-width: 390px; margin: 2rem auto; background: white; border-radius: 40px;
+            overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 14px solid #1a1a1a; min-height: 844px;
+        }
+        
+        .status-bar {
+            background: #F5E6D3; padding: 12px 20px 8px; display: flex;
+            justify-content: space-between; font-size: 14px; font-weight: 500;
+        }
+        
+        .screen { display: none; min-height: 800px; background: #FAFAF8; }
+        .screen.active { display: flex; flex-direction: column; }
+        
+        .screen-header {
+            background: #F5E6D3; padding: 16px 20px; display: flex;
+            align-items: center; gap: 12px; justify-content: space-between;
+        }
+        
+        .back-btn {
+            background: rgba(0,0,0,0.1); color: #333; border: none;
+            padding: 8px 16px; border-radius: 20px; font-size: 14px;
+            cursor: pointer; font-weight: 600;
+        }
+        
+        .add-more-btn {
+            background: #D68A73; color: white; border: none;
+            padding: 8px 16px; border-radius: 20px; font-size: 14px;
+            cursor: pointer; font-weight: 600;
+        }
+        
+        .screen-title { font-size: 20px; font-weight: 700; }
+        
+        .onboarding {
+            text-align: center; padding: 60px 32px;
+            background: linear-gradient(180deg, #F5E6D3 0%, #FAFAF8 100%); flex: 1;
+        }
+        
+        .onboarding-icon { font-size: 80px; margin-bottom: 24px; }
+        .onboarding h1 { font-size: 32px; font-weight: 800; margin-bottom: 12px; }
+        .onboarding p { font-size: 18px; color: #666; margin-bottom: 40px; line-height: 1.6; }
+        
+        .btn-primary {
+            background: #D68A73; color: white; padding: 16px 40px;
+            border-radius: 30px; border: none; font-size: 16px;
+            font-weight: 600; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(214, 138, 115, 0.3);
+        }
+        
+        .btn-primary:hover { background: #c57a63; transform: translateY(-2px); }
+        
+        .upload-options { padding: 40px 32px; flex: 1; }
+        .upload-options h2 { font-size: 28px; font-weight: 700; margin-bottom: 16px; text-align: center; }
+        .upload-options p { font-size: 16px; color: #666; text-align: center; margin-bottom: 40px; }
+        
+        .option-card {
+            background: white; border: 2px solid #E8D5C4; border-radius: 16px;
+            padding: 24px; margin-bottom: 16px; cursor: pointer; transition: all 0.3s;
+        }
+        
+        .option-card:hover {
+            border-color: #D68A73; transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(214, 138, 115, 0.2);
+        }
+        
+        .option-icon { font-size: 40px; margin-bottom: 12px; }
+        .option-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+        .option-desc { font-size: 14px; color: #666; line-height: 1.5; }
+        
+        .camera-screen { background: #000; color: white; position: relative; flex: 1; }
+        .camera-viewfinder {
+            height: 500px; background: linear-gradient(135deg, #4A5568 0%, #2D3748 100%);
+            position: relative; display: flex; align-items: center; justify-content: center;
+        }
+        
+        .camera-item-display { font-size: 120px; animation: pulse 2s infinite; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        .camera-overlay {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 24px; text-align: center;
+        }
+        
+        .capture-btn {
+            width: 70px; height: 70px; border-radius: 50%; background: white;
+            border: 4px solid #D68A73; cursor: pointer; margin: 0 auto;
+            transition: transform 0.2s;
+        }
+        
+        .capture-btn:hover { transform: scale(1.1); }
+        .capture-btn:active { transform: scale(0.95); }
+        
+        .item-counter { margin-top: 16px; font-size: 14px; color: #D68A73; font-weight: 600; }
+        
+        .camera-back-btn {
+            background: rgba(0,0,0,0.5); color: white; border: none;
+            padding: 8px 16px; border-radius: 20px; font-size: 14px;
+            cursor: pointer; position: absolute; top: 20px; left: 20px; z-index: 10;
+        }
+        
+        .review-header { background: #F5E6D3; padding: 20px; text-align: center; }
+        .review-header h2 { font-size: 24px; font-weight: 700; }
+        
+        .progress-bar { background: #E8D5C4; height: 6px; border-radius: 3px; margin-top: 12px; }
+        .progress-fill { background: #D68A73; height: 100%; border-radius: 3px; }
+        
+        .item-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+            padding: 20px; flex: 1; overflow-y: auto; padding-bottom: 100px;
+        }
+        
+        .item-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .item-image {
+            height: 140px; background: #F5E6D3; display: flex;
+            align-items: center; justify-content: center; font-size: 64px;
+        }
+        
+        .item-tags { padding: 12px; }
+        
+        .tag {
+            display: inline-block; background: #F0F0F0; padding: 4px 10px;
+            border-radius: 12px; font-size: 11px; margin: 2px; color: #666;
+            cursor: pointer; transition: all 0.2s;
+        }
+        
+        .tag:hover { background: #D68A73; color: white; }
+        .finish-btn { margin: 20px; }
+        
+        .home-header {
+            background: linear-gradient(135deg, #F5E6D3 0%, #E8D5C4 100%);
+            padding: 24px 20px; border-radius: 0 0 24px 24px;
+        }
+        
+        .greeting { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        
+        .weather-widget {
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(255,255,255,0.4); padding: 12px;
+            border-radius: 16px; backdrop-filter: blur(10px);
+        }
+        
+        .weather-icon { font-size: 32px; }
+        
+        .mood-input-container { padding: 16px 20px; background: white; border-bottom: 1px solid #E8D5C4; }
+        .mood-label { font-size: 13px; color: #666; margin-bottom: 8px; }
+        .mood-input-wrapper { display: flex; gap: 8px; align-items: center; }
+        
+        .mood-input {
+            flex: 1; padding: 12px 16px; border: 2px solid #E8D5C4;
+            border-radius: 24px; font-size: 15px; font-family: 'Inter', sans-serif;
+        }
+        
+        .mood-input:focus { outline: none; border-color: #D68A73; }
+        
+        .mood-submit {
+            background: #D68A73; color: white; border: none;
+            padding: 12px 20px; border-radius: 24px; font-weight: 600;
+            cursor: pointer; font-size: 14px;
+        }
+        
+        .outfit-section { padding: 20px; flex: 1; overflow-y: auto; padding-bottom: 100px; }
+        .section-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+        .outfit-card {
+            background: white; border-radius: 16px; padding: 20px;
+            margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        .outfit-items { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+        .outfit-item {
+            aspect-ratio: 1; background: #F5E6D3; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 48px; cursor: pointer; transition: transform 0.2s;
+        }
+        
+        .outfit-item:hover { transform: scale(1.05); }
+        .outfit-label { font-size: 14px; color: #666; margin-bottom: 8px; }
+        .outfit-actions { display: flex; gap: 12px; }
+        
+        .btn-outline {
+            flex: 1; padding: 12px; border: 2px solid #E0E0E0;
+            background: white; border-radius: 24px; font-size: 14px;
+            font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        
+        .btn-outline:hover { border-color: #D68A73; color: #D68A73; }
+        
+        .btn-solid {
+            flex: 1; padding: 12px; background: #D68A73; color: white;
+            border: none; border-radius: 24px; font-size: 14px;
+            font-weight: 600; cursor: pointer; transition: background 0.2s;
+        }
+        
+        .btn-solid:hover { background: #c57a63; }
+        
+        .nav-bar {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+            max-width: 362px; width: calc(100% - 28px); background: white;
+            border-top: 1px solid #E0E0E0; display: flex; padding: 12px;
+            justify-content: space-around; border-radius: 20px 20px 40px 40px;
+        }
+        
+        .nav-item { flex: 1; text-align: center; padding: 8px; font-size: 24px; cursor: pointer; transition: transform 0.2s; }
+        .nav-item:hover { transform: scale(1.1); }
+        
+        .closet-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 20px; }
+        .stat-card {
+            background: white; padding: 16px; border-radius: 12px;
+            text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .stat-value { font-size: 24px; font-weight: 700; color: #D68A73; }
+        .stat-label { font-size: 11px; color: #666; margin-top: 4px; }
+        
+        .closet-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+            padding: 20px; padding-bottom: 100px; overflow-y: auto;
+        }
+        
+        .closet-item {
+            aspect-ratio: 1; background: white; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 48px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            cursor: pointer; transition: transform 0.2s;
+        }
+        
+        .closet-item:hover { transform: scale(1.05); }
+        
+        .stats-content, .settings-content { padding: 20px; flex: 1; overflow-y: auto; padding-bottom: 100px; }
+        .stat-section, .setting-item {
+            background: white; border-radius: 16px; padding: 24px;
+            margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        .stat-section h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+        .stat-row {
+            display: flex; justify-content: space-between; padding: 12px 0;
+            border-bottom: 1px solid #F5E6D3;
+        }
+        
+        .stat-row:last-child { border-bottom: none; }
+        .stat-row-label { color: #666; }
+        .stat-row-value { font-weight: 600; color: #D68A73; }
+        
+        .setting-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px; margin-bottom: 12px;
+        }
+        
+        .setting-label { font-weight: 600; }
+        .setting-desc { font-size: 13px; color: #666; margin-top: 4px; }
+        
+        .toggle {
+            width: 50px; height: 28px; background: #E0E0E0;
+            border-radius: 14px; position: relative; cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle.active { background: #D68A73; }
+        
+        .toggle-knob {
+            width: 24px; height: 24px; background: white; border-radius: 12px;
+            position: absolute; top: 2px; left: 2px; transition: left 0.3s;
+        }
+        
+        .toggle.active .toggle-knob { left: 24px; }
+        
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; right: 0;
+            bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000;
+            align-items: center; justify-content: center;
+        }
+        
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 16px; padding: 24px; max-width: 340px; width: 90%; }
+        .modal-image {
+            width: 100%; height: 200px; background: #F5E6D3;
+            border-radius: 12px; display: flex; align-items: center;
+            justify-content: center; margin-bottom: 16px; font-size: 80px;
+        }
+        
+        .modal-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .modal-close {
+            width: 100%; padding: 12px; background: #D68A73;
+            color: white; border: none; border-radius: 24px;
+            font-weight: 600; cursor: pointer;
+        }
+        
+        .success-toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: #2e7d32; color: white; padding: 12px 24px;
+            border-radius: 24px; font-weight: 600; z-index: 2000;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        
+        .success-toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <!-- Onboarding Screen -->
+        <div id="onboarding-screen" class="screen active">
+            <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+            <div class="onboarding">
+                <div class="onboarding-icon">👗</div>
+                <h1>Your closet,<br>organized in 10 minutes</h1>
+                <p>AI catalogs your wardrobe. You get daily outfit suggestions.</p>
+                <button class="btn-primary" onclick="showScreen('upload-options-screen')">Get Started</button>
+            </div>
+        </div>
+        
+        <!-- Upload Options -->
+        <div id="upload-options-screen" class="screen">
+            <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+            <div class="screen-header">
+                <button class="back-btn" onclick="showScreen('onboarding-screen')">← Back</button>
+                <div class="screen-title">Add Items</div>
+            </div>
+            <div class="upload-options">
+                <h2>Choose an Option</h2>
+                <p>How would you like to proceed?</p>
+                <div class="option-card" onclick="startCataloging()">
+                    <div class="option-icon">📸</div>
+                    <div class="option-title">Upload New Items</div>
+                    <div class="option-desc">Take photos and let AI tag them</div>
+                </div>
+                <div class="option-card" onclick="loadExistingItems()">
+                    <div class="option-icon">📂</div>
+                    <div class="option-title">View Existing Items</div>
+                    <div class="option-desc">See uploaded items and continue</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Camera -->
+        <div id="camera-screen" class="screen">
+            <div class="status-bar" style="background: #000;"><span style="color: white;">9:41</span><span style="color: white;">📶 🔋</span></div>
+            <div class="camera-screen">
+                <button class="camera-back-btn" onclick="showScreen('upload-options-screen')">← Back</button>
+                <div class="camera-viewfinder">
+                    <div class="camera-item-display" id="camera-preview"></div>
+                </div>
+                <div class="camera-overlay">
+                    <div class="capture-btn" onclick="captureItem()"></div>
+                    <div class="item-counter"><span id="item-count">0</span> / 12 items cataloged</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Review -->
+        <div id="review-screen" class="screen">
+            <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+            <div class="screen-header">
+                <button class="back-btn" onclick="showScreen('camera-screen')">← Back</button>
+                <div class="screen-title">Review Items</div>
+            </div>
+            <div class="review-header">
+                <h2>Your Closet</h2>
+                <div class="progress-bar"><div class="progress-fill" style="width: 100%"></div></div>
+                <p style="font-size: 14px; color: #666; margin-top: 8px;">Tap tags to edit</p>
+            </div>
+            <div class="item-grid" id="review-grid"></div>
+            <button class="btn-primary finish-btn" style="width: calc(100% - 40px);" onclick="finishOnboarding()">See My Outfits</button>
+        </div>
+        
+        <!-- Home -->
+        <div id="home-screen" class="screen">
+            <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+            <div class="screen-header">
+                <div class="screen-title">Home</div>
+                <button class="add-more-btn" onclick="showScreen('upload-options-screen')">+ Add Items</button>
+            </div>
+            <div class="home-header">
+                <div class="greeting">Good morning!</div>
+                <div class="weather-widget">
+                    <div class="weather-icon">🌤️</div>
+                    <div>
+                        <div style="font-weight: 600;">52°F • Partly Cloudy</div>
+                        <div style="font-size: 13px; color: #666;">Perfect for layering</div>
+                    </div>
+                </div>
+            </div>
+            <div class="mood-input-container">
+                <div class="mood-label">Today's vibe:</div>
+                <div class="mood-input-wrapper">
+                    <input type="text" class="mood-input" id="mood-input" placeholder="Type: Gen Z, professional, comfy, bold...">
+                    <button class="mood-submit" onclick="updateMood()">Go</button>
+                </div>
+            </div>
+            <div class="outfit-section">
+                <div class="section-title" id="outfits-title">Today's Outfits</div>
+                <div id="outfits-container"></div>
+            </div>
+            <div class="nav-bar">
+                <div class="nav-item" onclick="showScreen('home-screen')">🏠</div>
+                <div class="nav-item" onclick="showScreen('closet-screen')">👗</div>
+                <div class="nav-item" onclick="showScreen('stats-screen')">📊</div>
+                <div class="nav-item" onclick="showScreen('settings-screen')">⚙️</div>
+            </div>
+        </div>
+        
+        <!-- Closet -->
+        <div id="closet-screen" class="screen">
+            <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+            <div class="screen-header">
+                <button class="back-btn" onclick="showScreen('home-screen')">← Back</button>
+                <div class="screen-title">My Closet</div>
+            </div>
+            <div class="closet-stats">
+                <div class="stat-card"><div class="stat-value" id="total-items">0</div><div class="stat-label">TOTAL</div></div>
+                <div class="stat-card"><div class="stat-value">32%</div><div class="stat-label">UTILIZED</div></div>
+                <div class="stat-card"><div class="stat-value">8</div><div class="stat-label">UNWORN</div></div>
+            </div>
+            <div class="closet-grid" id="closet-grid"></div>
+            <div class="nav-bar">
+                <div class="nav-item" onclick="showScreen('home-screen')">🏠</div>
+                <div class="nav-item" onclick="showScreen('closet-screen')">👗</div>
+                <div class="nav-item" onclick="showScreen('stats-screen')">📊</div>
+                <div class="nav-item" onclick="showScreen('settings-screen')">⚙️</div>
+            </div>
+        </div>
+        
+        <!-- Stats -->
+        <div id="stats-screen" class="screen">
+            <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+            <div class="screen-header">
+                <button class="back-btn" onclick="showScreen('home-screen')">← Back</button>
+                <div class="screen-title">My Stats</div>
+            </div>
+            <div class="stats-content">
+                <div class="stat-section">
+                    <h3>This Week</h3>
+                    <div class="stat-row"><span class="stat-row-label">Outfits Worn</span><span class="stat-row-value" id="stats-worn">0</span></div>
+                    <div class="stat-row"><span class="stat-row-label">Favorite Item</span><span class="stat-row-value">Blue Jeans</span></div>
+                </div>
+            </div>
+            <div class="nav-bar">
+                <div class="nav-item" onclick="showScreen('home-screen')">🏠</div>
+                <div class="nav-item" onclick="showScreen('closet-screen')">👗</div>
+                <div class="nav-item" onclick="showScreen('stats-screen')">📊</div>
+                <div class="nav-item" onclick="showScreen('settings-screen')">⚙️</div>
+            </div>
+        </div>
+        
+        <!-- Settings -->
+        <div id="settings-screen" class="screen">
+            <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+            <div class="screen-header">
+                <button class="back-btn" onclick="showScreen('home-screen')">← Back</button>
+                <div class="screen-title">Settings</div>
+            </div>
+            <div class="settings-content">
+                <div class="setting-item">
+                    <div><div class="setting-label">Daily Notifications</div><div class="setting-desc">Morning outfit suggestions</div></div>
+                    <div class="toggle active" onclick="toggleSetting(this)"><div class="toggle-knob"></div></div>
+                </div>
+                <div class="setting-item">
+                    <div><div class="setting-label">Weather Sync</div><div class="setting-desc">Weather-based outfits</div></div>
+                    <div class="toggle active" onclick="toggleSetting(this)"><div class="toggle-knob"></div></div>
+                </div>
+            </div>
+            <div class="nav-bar">
+                <div class="nav-item" onclick="showScreen('home-screen')">🏠</div>
+                <div class="nav-item" onclick="showScreen('closet-screen')">👗</div>
+                <div class="nav-item" onclick="showScreen('stats-screen')">📊</div>
+                <div class="nav-item" onclick="showScreen('settings-screen')">⚙️</div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="item-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-image" id="modal-image"></div>
+            <div class="modal-tags" id="modal-tags"></div>
+            <button class="modal-close" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+    
+    <div id="success-toast" class="success-toast"></div>
+    
+    <script>
+        const clothingDatabase = [
+            { emoji: '👕', category: 'Top', color: 'White', fabric: 'Cotton', id: 1 },
+            { emoji: '👔', category: 'Top', color: 'Blue', fabric: 'Cotton', id: 2 },
+            { emoji: '🧥', category: 'Top', color: 'Black', fabric: 'Leather', id: 3 },
+            { emoji: '👚', category: 'Top', color: 'Pink', fabric: 'Silk', id: 4 },
+            { emoji: '👖', category: 'Bottom', color: 'Blue', fabric: 'Denim', id: 5 },
+            { emoji: '👗', category: 'Bottom', color: 'Red', fabric: 'Cotton', id: 6 },
+            { emoji: '🩳', category: 'Bottom', color: 'Khaki', fabric: 'Cotton', id: 7 },
+            { emoji: '👘', category: 'Bottom', color: 'Black', fabric: 'Silk', id: 8 },
+            { emoji: '👟', category: 'Shoes', color: 'White', fabric: 'Canvas', id: 9 },
+            { emoji: '👞', category: 'Shoes', color: 'Brown', fabric: 'Leather', id: 10 },
+            { emoji: '👠', category: 'Shoes', color: 'Black', fabric: 'Leather', id: 11 },
+            { emoji: '🥾', category: 'Shoes', color: 'Tan', fabric: 'Leather', id: 12 }
+        ];
+        
+        let catalogedItems = [];
+        let currentOutfits = [];
+        let catalogIndex = 0;
+        let currentMood = 'casual';
+        let outfitsWorn = 0;
+        
+        const moodOutfits = {
+            'gen z': ['Oversized streetwear ✨', 'Y2K energy 🔥', 'Main character vibes 💅'],
+            'genz': ['Oversized streetwear ✨', 'Y2K energy 🔥', 'Main character vibes 💅'],
+            'professional': ['Work meeting ready', 'Business casual', 'Office-appropriate'],
+            'comfy': ['Cozy mode 🛋️', 'Loungewear', 'Relaxation station'],
+            'bold': ['Statement piece 🔥', 'Fashion-forward', 'Confidence boost'],
+            'casual': ['Weekend ready', 'Casual & comfortable', 'Easy everyday']
+        };
+        
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+        
+        function startCataloging() {
+            catalogIndex = 0;
+            document.getElementById('camera-preview').textContent = clothingDatabase[0].emoji;
+            showScreen('camera-screen');
+        }
+        
+        function loadExistingItems() {
+            if (catalogedItems.length === 0) {
+                showToast('❌ No items yet! Upload some clothes first.');
+                return;
+            }
+            generateOutfits();
+            document.getElementById('total-items').textContent = catalogedItems.length;
+            renderClosetGrid();
+            showScreen('home-screen');
+        }
+        
+        function captureItem() {
+            if (catalogIndex < 12) {
+                catalogedItems.push({...clothingDatabase[catalogIndex]});
+                catalogIndex++;
+                document.getElementById('item-count').textContent = catalogedItems.length;
+                
+                if (catalogIndex < 12) {
+                    setTimeout(() => {
+                        document.getElementById('camera-preview').textContent = clothingDatabase[catalogIndex].emoji;
+                    }, 400);
+                } else {
+                    setTimeout(() => {
+                        renderReviewScreen();
+                        showScreen('review-screen');
+                    }, 800);
+                }
+            }
+        }
+        
+        function renderReviewScreen() {
+            document.getElementById('review-grid').innerHTML = catalogedItems.map((item, i) => `
+                <div class="item-card">
+                    <div class="item-image">${item.emoji}</div>
+                    <div class="item-tags">
+                        <span class="tag" onclick="editTag(${i}, 'category')">${item.category}</span>
+                        <span class="tag" onclick="editTag(${i}, 'color')">${item.color}</span>
+                        <span class="tag" onclick="editTag(${i}, 'fabric')">${item.fabric}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function editTag(i, type) {
+            const newVal = prompt(`Edit ${type}:`, catalogedItems[i][type]);
+            if (newVal && newVal.trim()) { 
+                catalogedItems[i][type] = newVal.trim(); 
+                renderReviewScreen(); 
+            }
+        }
+        
+        function finishOnboarding() {
+            generateOutfits();
+            document.getElementById('total-items').textContent = catalogedItems.length;
+            renderClosetGrid();
+            showScreen('home-screen');
+        }
+        
+        function updateMood() {
+            const input = document.getElementById('mood-input');
+            if (input.value.trim()) {
+                currentMood = input.value.toLowerCase().trim();
+                generateOutfits();
+                input.value = '';
+                showToast('✨ Outfits updated!');
+            }
+        }
+        
+        function generateOutfits() {
+            const tops = catalogedItems.filter(i => i.category === 'Top');
+            const bottoms = catalogedItems.filter(i => i.category === 'Bottom');
+            const shoes = catalogedItems.filter(i => i.category === 'Shoes');
+            
+            if (tops.length === 0 || bottoms.length === 0 || shoes.length === 0) {
+                document.getElementById('outfits-container').innerHTML = '<p style="color: #666; text-align: center; padding: 40px;">Need at least 1 top, 1 bottom, and 1 pair of shoes to create outfits!</p>';
+                return;
+            }
+            
+            const labels = moodOutfits[currentMood] || moodOutfits['casual'];
+            
+            document.getElementById('outfits-title').textContent = 
+                currentMood !== 'casual' ? `${currentMood.toUpperCase()} VIBES 🔥` : "Today's Outfits";
+            
+            currentOutfits = [];
+            for (let i = 0; i < 3; i++) {
+                currentOutfits.push({
+                    id: i,
+                    label: labels[i] || labels[0],
+                    items: [
+                        tops[i % tops.length], 
+                        bottoms[i % bottoms.length], 
+                        shoes[i % shoes.length]
+                    ]
+                });
+            }
+            renderOutfits();
+        }
+        
+        function renderOutfits() {
+            document.getElementById('outfits-container').innerHTML = currentOutfits.map(o => `
+                <div class="outfit-card">
+                    <div class="outfit-label">${o.label}</div>
+                    <div class="outfit-items">
+                        ${o.items.map((item, idx) => `<div class="outfit-item" onclick="replaceOutfitItem(${o.id}, ${idx})">${item.emoji}</div>`).join('')}
+                    </div>
+                    <div class="outfit-actions">
+                        <button class="btn-outline" onclick="passOutfit(${o.id})">Pass</button>
+                        <button class="btn-solid" onclick="wearOutfit(${o.id})">I'll Wear This</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function passOutfit(id) {
+            const tops = catalogedItems.filter(i => i.category === 'Top');
+            const bottoms = catalogedItems.filter(i => i.category === 'Bottom');
+            const shoes = catalogedItems.filter(i => i.category === 'Shoes');
+            currentOutfits[id].items = [
+                tops[Math.floor(Math.random() * tops.length)],
+                bottoms[Math.floor(Math.random() * bottoms.length)],
+                shoes[Math.floor(Math.random() * shoes.length)]
+            ];
+            renderOutfits();
+        }
+        
+        function wearOutfit(id) { 
+            outfitsWorn++;
+            document.getElementById('stats-worn').textContent = outfitsWorn;
+            showToast('✓ Outfit saved! Marked as worn today.');
+        }
+        
+        function replaceOutfitItem(outfitId, itemIdx) {
+            const outfit = currentOutfits[outfitId];
+            const alternatives = catalogedItems.filter(i => i.category === outfit.items[itemIdx].category && i.id !== outfit.items[itemIdx].id);
+            if (alternatives.length > 0) {
+                outfit.items[itemIdx] = alternatives[Math.floor(Math.random() * alternatives.length)];
+                renderOutfits();
+            }
+        }
+        
+        function renderClosetGrid() {
+            document.getElementById('closet-grid').innerHTML = catalogedItems.map(item => 
+                `<div class="closet-item" onclick="showItemDetail(${item.id})">${item.emoji}</div>`
+            ).join('');
+        }
+        
+        function showItemDetail(id) {
+            const item = catalogedItems.find(i => i.id === id);
+            if (!item) return;
+            document.getElementById('modal-image').textContent = item.emoji;
+            document.getElementById('modal-tags').innerHTML = `
+                <span class="tag">${item.category}</span>
+                <span class="tag">${item.color}</span>
+                <span class="tag">${item.fabric}</span>
+            `;
+            document.getElementById('item-modal').classList.add('active');
+        }
+        
+        function closeModal() { 
+            document.getElementById('item-modal').classList.remove('active'); 
+        }
+        
+        function toggleSetting(el) { 
+            el.classList.toggle('active'); 
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('success-toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+    </script>
+</body>
+</html>
